@@ -4,49 +4,57 @@ document.addEventListener("DOMContentLoaded", function() {
 
   form.addEventListener("submit", function(event) {
     event.preventDefault();
-    test();
+    addComment();
   });
 });
 
-function addComment (){
+let commentList = document.getElementById("comment-list");
+let firstNameInput = document.getElementById("first-name");
+let lastNameInput = document.getElementById("last-name");
+let messageInput = document.getElementById("message");
+let errorMessage = document.getElementById("error-message");
 
-  let commentList = document.getElementById("comment-list");
-  let firstNameInput = document.getElementById("first-name");
-  let lastNameInput = document.getElementById("last-name");
-  let messageInput = document.getElementById("message");
-  let errorMessage = document.getElementById("error-message");
-  
+function getValue(){
   let firstName = firstNameInput.value;
   let lastName = lastNameInput.value;
   let messageText = messageInput.value;
+  return {firstName, lastName, messageText};
+}
 
-  if(!firstName, !lastName, !messageText){
+function createComment(firstName, lastName, messageText) {
+  errorMessage.style.display = "none";
+
+ let divComment = document.createElement("div");
+ divComment.className = "flex space-x-4 text-sm text-gray-500";
+
+ let previousComment = document.querySelector(".flex-1.py-10.border-t.border-gray-200");
+ let newComment = previousComment.cloneNode(true);
+
+ let nameElement = newComment.querySelector("h3");
+ nameElement.textContent = firstName + " " + lastName;
+
+ let messageElement = newComment.querySelector("p");
+ messageElement.textContent = messageText;
+
+ divComment.appendChild(newComment);
+ commentList.appendChild(divComment);
+}
+
+function reset(){
+  firstNameInput.value = "";
+  lastNameInput.value = "";
+  messageInput.value = "";
+}
+
+function addComment(){
+  
+  let {firstName, lastName, messageText} = getValue();
+
+  if(!firstName.trim()|| !lastName.trim()|| !messageText.trim()){
     errorMessage.style.display = "block";
   }
   else{
-    errorMessage.style.display = "none";
-
-    let divComment = document.createElement("div");
-    divComment.className = "flex space-x-4 text-sm text-gray-500";
-    let divComment2 = document.createElement("div");
-    divComment2.className = "flex-1 py-10 border-t border-gray-200";
-    let nameComment = document.createElement("h3");
-    nameComment.className = "font-medium text-gray-900";
-    let divCommentMessage = document.createElement("div");
-    divCommentMessage.className = "prose prose-sm mt-4 max-w-none text-gray-500";
-    let p = document.createElement("p");
-    let nameMessage = document.createTextNode(firstName + " " + lastName);
-    let messageTextNode = document.createTextNode(messageText);
-    
-    nameComment.appendChild(nameMessage);
-    p.appendChild(messageTextNode);
-    divCommentMessage.appendChild(p);
-    divComment.appendChild(nameComment);
-    divComment.appendChild(divCommentMessage);
-    commentList.appendChild(divComment);
-
-    firstNameInput.value = "";
-    lastNameInput.value = "";
-    messageInput.value = "";
+    createComment(firstName, lastName, messageText);
+    reset();
   }
-}
+};
